@@ -1,5 +1,5 @@
 # Kernel
-git clone https://github.com/MoonL1ght-Team/MoonLightKernel_xiaomi_heat_fire -b main kernel/xiaomi/fire
+git clone https://github.com/MoonL1ght-Team/MoonLightKernel_xiaomi_heat_fire_new -b main kernel/xiaomi/fire
 
 # Vendor tree
 git clone https://github.com/MoonL1ght-Team/proprietary_vendor_xiaomi_fire -b lineage-23.2 vendor/xiaomi/fire
