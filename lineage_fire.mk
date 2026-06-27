@@ -27,7 +27,7 @@ PRODUCT_GMS_CLIENTID_BASE := android-xiaomi
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
     BuildDesc="fire-user 14 UP1A.231005.007 V816.0.8.0.UMXMIXM release-keys" \
-    BuildFingerprint=Redmi/fire_global/fire:14/UP1A.231005.007/V816.0.8.0.UMXMIXM:user/release-keys
+    BuildFingerprint=Redmi/fire_global/fire:14/UP1A.231005.007/V816.0.8.0.UMXMIXM:user/release-keys \
     SystemModel=$(PRODUCT_SYSTEM_DEVICE) \
     SystemName=$(PRODUCT_SYSTEM_NAME) \
     ProductModel=$(PRODUCT_SYSTEM_DEVICE) \
