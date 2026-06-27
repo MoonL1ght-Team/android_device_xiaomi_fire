@@ -228,6 +228,8 @@ PRODUCT_PACKAGES += \
 # Properties
 include $(LOCAL_PATH)/vendor_logtag.mk
 
+$(call soong_config_set_bool,mediatek_gadget,use_custom_usb_gadget_rc,true)
+
 # Rootdir
 PRODUCT_PACKAGES += \
     fstab.mt6768 \
