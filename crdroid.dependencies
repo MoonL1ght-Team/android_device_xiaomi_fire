@@ -16,7 +16,7 @@
     "target_path": "kernel/xiaomi/fire"
   },
   {
-    "repository": "crdroidandroid/proprietary_vendor_xiaomi_fire",
+    "repository": "MoonL1ght-Team/proprietary_vendor_xiaomi_fire",
     "target_path": "vendor/xiaomi/fire"
   }
 ]
