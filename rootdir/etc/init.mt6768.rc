@@ -394,7 +394,8 @@ on post-fs-data
     chown media system /dev/MJC
 
     #kpd
-    chown radio radio /sys/devices/platform/mtk-kpd/driver/kpd_call_state
+    chown radio radio /sys/bus/platform/drivers/mtk-kpd/kpd_call_state
+    chmod 0664 /sys/bus/platform/drivers/mtk-kpd/kpd_call_state
 
     #Charging Battery
     chown radio radio /sys/devices/platform/battery/Charging_CallState
@@ -1106,4 +1107,3 @@ service vendor.charger /system/bin/charger
     file /sys/fs/pstore/console-ramoops-0 r
     file /sys/fs/pstore/console-ramoops r
     file /proc/last_kmsg r
-
