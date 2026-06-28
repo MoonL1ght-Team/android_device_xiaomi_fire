@@ -21,7 +21,7 @@ set_prop(hal_fingerprint_default, vendor_fingerprint_persist_prop)
 
 # Allow fingerprint HAL to request MTK perf hints when the vendor blob probes
 # vendor.mediatek.hardware.mtkpower::IMtkPerf.
-allow hal_fingerprint_default hal_power_hwservice:hwservice_manager find;
+hal_client_domain(hal_fingerprint_default, hal_power)
 
 # Allow the same HAL to query the vendor fingerprint extension services it
 # registers and probes during init.
