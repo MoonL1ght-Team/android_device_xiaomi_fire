@@ -38,15 +38,7 @@
                driverIntf="v4l2"
                maxConcurrentInstances="15"
                colorConvertPixelFormat="4096" />
-        <Video name="c2.mtk.vp9.decoder"
-               type="video/x-vnd.on2.vp9"
-               driverIntf="v4l2"
-               maxConcurrentInstances="15"
-               colorConvertPixelFormat="4096" />
-        <Video name="c2.mtk.vp9.decoder.secure"
-               type="video/x-vnd.on2.vp9"
-               driverIntf="v4l2"
-               maxConcurrentInstances="1" />
+        <!-- Do not expose MTK VP9 through V4L2; the C2 HAL crashes on this path. -->
         <Video name="c2.mtk.mpeg2.decoder"
                type="video/mpeg2"
                driverIntf="v4l2"
