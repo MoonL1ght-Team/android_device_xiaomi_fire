@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<permissions>
+    <privapp-permissions package="org.lineageos.fire.aodguard">
+        <permission name="android.permission.DEVICE_POWER"/>
+        <permission name="android.permission.READ_DREAM_STATE"/>
+        <permission name="android.permission.WRITE_DREAM_STATE"/>
+    </privapp-permissions>
+</permissions>
