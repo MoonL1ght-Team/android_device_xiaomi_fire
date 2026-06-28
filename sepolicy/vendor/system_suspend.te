@@ -1,0 +1,8 @@
+# Allow suspend-service to read kernel wakeup source accounting without logging
+# AVCs on every suspend statistics poll.
+allow system_suspend sysfs_wakeup:dir r_dir_perms;
+allow system_suspend sysfs_wakeup:file r_file_perms;
+
+# Some dynamic wakeup-source stat files remain generic sysfs on this kernel.
+# Keep the denial behavior but stop repeated accounting reads from spamming logs.
+dontaudit system_suspend sysfs:file read;

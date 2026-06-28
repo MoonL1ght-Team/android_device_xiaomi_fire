@@ -19,6 +19,19 @@ allow hal_fingerprint_default hal_fingerprint_default_exec:file entrypoint;
 get_prop(hal_fingerprint_default, vendor_fingerprint_persist_prop)
 set_prop(hal_fingerprint_default, vendor_fingerprint_persist_prop)
 
+# Allow fingerprint HAL to request MTK perf hints when the vendor blob probes
+# vendor.mediatek.hardware.mtkpower::IMtkPerf.
+allow hal_fingerprint_default hal_power_hwservice:hwservice_manager find;
+
+# Allow the same HAL to query the vendor fingerprint extension services it
+# registers and probes during init.
+allow hal_fingerprint_default vendor_hal_fingerprint_hwservice_xiaomi:hwservice_manager find;
+
+# The proprietary fingerprint blob probes broad Android properties and the root
+# directory during init. Keep those probes denied, but stop flooding logcat.
+dontaudit hal_fingerprint_default default_prop:file read;
+dontaudit hal_fingerprint_default rootfs:dir read;
+
 # Allow fingerprint HAL to create netlink_socket
 allow hal_fingerprint_default self:netlink_socket create_socket_perms_no_ioctl;
 
