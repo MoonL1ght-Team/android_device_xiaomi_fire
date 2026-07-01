@@ -9,6 +9,9 @@ on init
     chown system system /dev/stune/foreground
     chown system system /dev/stune/background
     chown system system /dev/stune/top-app
+    chown system system /dev/stune/top-app/schedtune.boost
+    chown system system /dev/stune/top-app/schedtune.prefer_idle
+    chown system system /dev/stune/top-app/schedtune.uclamp.max
     chown system system /dev/stune/rt
     chown system system /dev/stune/tasks
     chown system system /dev/stune/foreground/tasks
@@ -20,6 +23,10 @@ on init
     chmod 0664 /dev/stune/background/tasks
     chmod 0664 /dev/stune/top-app/tasks
     chmod 0664 /dev/stune/rt/tasks
+
+    write /dev/stune/top-app/schedtune.boost 8
+    write /dev/stune/top-app/schedtune.prefer_idle 1
+    write /dev/stune/top-app/schedtune.uclamp.max max
 
     # Reset stune group setting for NNAPI HAL processes
     write /dev/stune/nnapi-hal/schedtune.boost 0
@@ -51,10 +58,14 @@ on enable-low-power
     write /proc/cpufreq/cpufreq_sched_disable 0
 
     chown system system /dev/stune/foreground/schedtune.prefer_idle
+    chown system system /dev/stune/top-app/schedtune.boost
     chown system system /dev/stune/top-app/schedtune.prefer_idle
+    chown system system /dev/stune/top-app/schedtune.uclamp.max
     chown system system /dev/stune/rt/schedtune.prefer_idle
     write /dev/stune/foreground/schedtune.prefer_idle 0
-    write /dev/stune/top-app/schedtune.prefer_idle 0
+    write /dev/stune/top-app/schedtune.boost 8
+    write /dev/stune/top-app/schedtune.prefer_idle 1
+    write /dev/stune/top-app/schedtune.uclamp.max max
     write /dev/stune/rt/schedtune.prefer_idle 0
     write /proc/sys/kernel/sched_migration_cost_ns 200000
     # Enable PowerHAL hint processing
