@@ -951,11 +951,13 @@ on property:sys.boot_completed=1
     chown system system /dev/stune/foreground/schedtune.prefer_idle
     chown system system /dev/stune/top-app/schedtune.boost
     chown system system /dev/stune/top-app/schedtune.prefer_idle
+    chown system system /dev/stune/top-app/schedtune.uclamp.min
     chown system system /dev/stune/top-app/schedtune.uclamp.max
     chown system system /dev/stune/rt/schedtune.prefer_idle
     write /dev/stune/foreground/schedtune.prefer_idle 0
     write /dev/stune/top-app/schedtune.boost 8
     write /dev/stune/top-app/schedtune.prefer_idle 1
+    write /dev/stune/top-app/schedtune.uclamp.min 4
     write /dev/stune/top-app/schedtune.uclamp.max max
     write /dev/stune/rt/schedtune.prefer_idle 0
     write /proc/sys/kernel/sched_migration_cost_ns 200000
