@@ -248,6 +248,24 @@
       "Value": "10"
     },
     {
+      "PowerHint": "INTERACTION",
+      "Node": "GPUSchedPeriod",
+      "Duration": 1000,
+      "Value": "50"
+    },
+    {
+      "PowerHint": "INTERACTION",
+      "Node": "GPUDVFSInterval",
+      "Duration": 1000,
+      "Value": "50"
+    },
+    {
+      "PowerHint": "INTERACTION",
+      "Node": "GPUSchedMode",
+      "Duration": 1000,
+      "Value": "1"
+    },
+    {
       "PowerHint": "LAUNCH",
       "Node": "CPUBigClusterMaxFreq",
       "Duration": 3000,
@@ -292,6 +310,24 @@
     {
       "PowerHint": "LAUNCH",
       "Node": "SchedBoost",
+      "Duration": 3000,
+      "Value": "1"
+    },
+    {
+      "PowerHint": "LAUNCH",
+      "Node": "GPUSchedPeriod",
+      "Duration": 3000,
+      "Value": "50"
+    },
+    {
+      "PowerHint": "LAUNCH",
+      "Node": "GPUDVFSInterval",
+      "Duration": 3000,
+      "Value": "50"
+    },
+    {
+      "PowerHint": "LAUNCH",
+      "Node": "GPUSchedMode",
       "Duration": 3000,
       "Value": "1"
     },
