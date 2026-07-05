@@ -270,6 +270,7 @@ on post-fs-data
     # SCP log
     chmod 0660 /sys/class/misc/scp/scp_mobile_log
     chown root system /sys/class/misc/scp/scp_mobile_log
+    write /sys/class/misc/scp/scp_mobile_log 0
     chmod 0220 /sys/class/misc/scp/scp_log_flush
     chown root system /sys/class/misc/scp/scp_log_flush
     chmod 0440 /dev/scp
@@ -280,6 +281,7 @@ on post-fs-data
     # SSPM log
     chmod 0620 /sys/class/misc/sspm/sspm_mobile_log
     chown root system /sys/class/misc/sspm/sspm_mobile_log
+    write /sys/class/misc/sspm/sspm_mobile_log 0
     chmod 0440 /dev/sspm
     chown root system /dev/sspm
 
@@ -704,6 +706,8 @@ on boot
     chmod 0660 /sys/devices/system/cpu/cpufreq/policy6/scaling_governor
     chown root   system /sys/kernel/debug/binder/transaction_log_enable
     chown root   system /sys/kernel/debug/binder/perf_evalue
+    write /sys/kernel/debug/binder/transaction_log_enable 0
+    write /sys/kernel/debug/binder/perf_evalue 0
     chown system system /sys/devices/system/cpu/rq-stats/htasks_thresh
     chmod 0660 /sys/devices/system/cpu/rq-stats/htasks_thresh
     chown system system /sys/devices/system/cpu/rq-stats/avg_htasks_thresh
@@ -711,6 +715,7 @@ on boot
 
     chown system /sys/module/mlog/parameters/do_mlog
     chown system /sys/module/mlog/parameters/timer_intval
+    write /sys/module/mlog/parameters/do_mlog 0
 
     chown root   radio  /sys/class/leds/lcd-backlight/duty
     chown root   radio  /sys/class/leds/lcd-backlight/div
