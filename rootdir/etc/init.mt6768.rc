@@ -19,7 +19,6 @@ import /vendor/etc/init/hw/init.modem.rc
 # *** DO NOT import the new rc file after this line ***
 
 on early-init
-    write /proc/bootprof "INIT:early-init"
     # boot perf. tune
     write /proc/perfmgr/boost_ctrl/cpu_ctrl/boot_freq "0 0 0 0"
     write /sys/devices/platform/10012000.dvfsrc/helio-dvfsrc/dvfsrc_req_ddr_opp 0
@@ -27,7 +26,6 @@ on early-init
     chmod 0755 /sys/kernel/debug
 
 on init
-    write /proc/bootprof "INIT:init"
     # Support legacy paths
     symlink /sdcard /mnt/sdcard
 
@@ -57,7 +55,6 @@ on init
     write /dev/cpuset/top-app/cpus 0-7
 
 on late-init
-    write /proc/bootprof "INIT:late-init"
 # enable rcu_expedited
     write /sys/kernel/rcu_expedited 1
 
@@ -106,20 +103,15 @@ on property:sys.boot_completed=1
     write /proc/pl_lk "0"
 
 on early-fs
-    write /proc/bootprof "INIT:early-fs"
-
     # Turn backlight on and switch to backlight trigger
     write /sys/class/leds/lcd-backlight/brightness "1000"
     write /sys/class/leds/lcd-backlight/trigger "backlight"
 
 on fs
-    write /proc/bootprof "INIT:fs"
     start vendor.boot-hal-1-2
 
     # mount fstab
-    write /proc/bootprof "INIT:Mount_START"
     mount_all /vendor/etc/fstab.mt6768 --early
-    write /proc/bootprof "INIT:Mount_END"
 
     # mount rescue
     mount ext4 /dev/block/bootdevice/by-name/rescue /mnt/rescue noatime
@@ -133,8 +125,6 @@ on fs
     mount iso9660 loop@/vendor/etc/iAmCdRom.iso /mnt/cd-rom ro
 
 on post-fs
-    write /proc/bootprof "INIT:post-fs"
-
     # boot perf. tune
     write /proc/perfmgr/boost_ctrl/eas_ctrl/boot_boost "0 100"
     write /proc/perfmgr/boost_ctrl/eas_ctrl/boot_boost "1 100"
@@ -176,13 +166,10 @@ on post-fs
     chown root system /proc/ccci_dump
 
 on late-fs
-    write /proc/bootprof "INIT:late-fs"
     wait_for_prop hwservicemanager.ready "true"
     setprop init.userspace_reboot.userdata_remount.timeoutmillis 10000
-    write /proc/bootprof "INIT:Mount_START --late"
     mount_all /vendor/etc/fstab.mt6768 --late
     exec /system/bin/tune2fs -O has_journal -u 10010 -r 4096 /dev/block/platform/bootdevice/by-name/userdata
-    write /proc/bootprof "INIT:Mount_END --late"
 
 on post-fs-data
     mkdir /data/vendor 0777 nfc nfc
@@ -190,8 +177,6 @@ on post-fs-data
     mkdir /data/vendor/nfc/param 0777 nfc nfc
     chmod 0660 /dev/pn557
     chown nfc nfc /dev/pn557
-
-    write /proc/bootprof "INIT:post-fs-data"
 
     # boot time fs tune
     write /sys/block/mmcblk0/queue/iostats 0
@@ -686,16 +671,10 @@ on post-fs-data
 # End of adding by MTK drivers
 # -----------------------
 
-on zygote-start
-    write /proc/bootprof "INIT:zygote-start"
-
 on early-boot
-    write /proc/bootprof "INIT:early-boot"
     verity_update_state
 
 on boot
-    write /proc/bootprof "INIT:boot"
-
     write /proc/sys/vm/dirty_writeback_centisecs 300
     chown system system /sys/power/autosleep
     chmod 0660 /sys/power/autosleep
@@ -897,25 +876,18 @@ on boot
     chown system system /sys/class/thermal/thermal_message/sconfig
 
 on property:vold.decrypt=trigger_reset_main
-    write /proc/bootprof "INIT:vold.decrypt=trigger_reset_main"
     setprop sys.boot_completed 0
     setprop dev.bootcomplete 0
 
-on property:vold.decrypt=trigger_post_fs_data
-    write /proc/bootprof "INIT:vold.decrypt=trigger_post_fs_data"
-
 on property:vold.decrypt=trigger_restart_min_framework
-    write /proc/bootprof "INIT:vold.decrypt=trigger_restart_min_framework"
     start nvram_daemon
     start msensord
 
 on property:vold.decrypt=trigger_restart_framework
-    write /proc/bootprof "INIT:vold.decrypt=trigger_restart_framework"
     start nvram_daemon
     start msensord
 
 on property:vold.decrypt=trigger_shutdown_framework
-    write /proc/bootprof "INIT:vold.decrypt=trigger_shutdown_framework"
     setprop sys.boot_completed 0
     setprop dev.bootcomplete 0
 
