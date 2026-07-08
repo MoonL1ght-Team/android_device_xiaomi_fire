@@ -90,12 +90,7 @@ DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
     hardware/xiaomi/vintf/xiaomi_framework_compatibility_matrix.xml
 
 # Kernel
-TARGET_KERNEL_ARCH := arm64
-TARGET_KERNEL_HEADER_ARCH := arm64
-TARGET_KERNEL_SOURCE := kernel/xiaomi/fire
-TARGET_KERNEL_CONFIG := fire_defconfig
-TARGET_KERNEL_NO_GCC := true
-BOARD_KERNEL_IMAGE_NAME := Image.gz
+include $(DEVICE_PATH)/kernel/BoardConfigKernel.mk
 
 # NFC
 ODM_MANIFEST_SKUS += \

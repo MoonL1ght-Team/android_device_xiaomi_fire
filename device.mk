@@ -13,6 +13,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
 # Setup dalvik vm configs
 $(call inherit-product, frameworks/native/build/phone-xhdpi-4096-dalvik-heap.mk)
 
+# Kernel
+$(call inherit-product, $(LOCAL_PATH)/kernel/KernelProduct.mk)
+
 # A/B
 PRODUCT_PACKAGES += \
     com.android.hardware.boot \
