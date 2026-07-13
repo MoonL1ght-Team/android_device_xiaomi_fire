@@ -2,8 +2,9 @@
 /*
  * Recovery update-binary for Xiaomi Fire GKI 6.6 GPT migration.
  *
- * It shrinks vendor_boot_a and vendor_boot_b from the stock 64 MiB GPT entries
- * to 8 MiB, leaving partition starts and all following partitions untouched.
+ * It toggles vendor_boot_a and vendor_boot_b between the stock 64 MiB GPT
+ * entries and the GKI 6.6 8 MiB entries, leaving partition starts and all
+ * following partitions untouched.
  */
 
 #ifdef HOST_TEST
@@ -106,6 +107,10 @@ static void sys_exit(long code) {
 }
 #endif
 
+static int plain_output;
+static int restore_stock;
+static int auto_toggle = 1;
+
 #define SECTOR_SIZE 512ULL
 #define MAX_GPT_BYTES 131072U
 #define BACKUP_BYTES (1024U * 1024U)
@@ -147,15 +152,22 @@ static void print_raw(const char *s) {
         print_raw_fd(1, s);
 }
 
+static void msg_begin(void) {
+    if (!plain_output)
+        print_raw("ui_print ");
+}
+
+static void msg_end(void) {
+    if (plain_output)
+        print_raw("\n");
+    else
+        print_raw("\nui_print\n");
+}
+
 static void ui_print(const char *s) {
-#ifdef HOST_TEST
+    msg_begin();
     print_raw(s);
-    print_raw("\n");
-#else
-    print_raw("ui_print ");
-    print_raw(s);
-    print_raw("\nui_print\n");
-#endif
+    msg_end();
 }
 
 static void print_hex_u64(u64 value) {
@@ -185,6 +197,14 @@ static int parse_fd(const char *s) {
         s++;
     }
     return v > 0 ? v : 1;
+}
+
+static int str_eq(const char *a, const char *b) {
+    while (*a && *b && *a == *b) {
+        a++;
+        b++;
+    }
+    return *a == 0 && *b == 0;
 }
 
 static u32 get_le32(const u8 *p) {
@@ -303,13 +323,13 @@ static int check_fixed_part(const u8 *entry, const char *name, u64 first,
     if (got_first == first && got_last == last)
         return 0;
     ui_print("unexpected fixed partition geometry");
-    print_raw("ui_print ");
+    msg_begin();
     print_raw(name);
     print_raw(" got first=");
     print_hex_u64(got_first);
     print_raw(" last=");
     print_hex_u64(got_last);
-    print_raw("\nui_print\n");
+    msg_end();
     return -1;
 }
 
@@ -317,35 +337,58 @@ static int patch_vendor_part(u8 *entry, const char *name, u64 first,
                              u64 old_last, u64 new_last, int *changed) {
     u64 got_first = get_le64(entry + 32);
     u64 got_last = get_le64(entry + 40);
+    u64 from_last;
+    u64 to_last;
+    const char *from_size;
+    const char *to_size;
     if (got_first != first) {
         ui_print("unexpected vendor_boot start LBA");
         return -1;
     }
-    if (got_last == new_last) {
-        print_raw("ui_print already patched: ");
+
+    from_last = restore_stock ? new_last : old_last;
+    to_last = restore_stock ? old_last : new_last;
+    from_size = restore_stock ? "8 MiB" : "64 MiB";
+    to_size = restore_stock ? "64 MiB" : "8 MiB";
+
+    if (got_last == to_last) {
+        msg_begin();
+        print_raw("already in target layout: ");
         print_raw(name);
-        print_raw("\nui_print\n");
+        print_raw(" = ");
+        print_raw(to_size);
+        msg_end();
         return 0;
     }
-    if (got_last != old_last) {
+    if (got_last != from_last) {
         ui_print("unexpected vendor_boot size; refusing to patch");
         return -1;
     }
-    put_le64(entry + 40, new_last);
+    put_le64(entry + 40, to_last);
     *changed = 1;
-    print_raw("ui_print patched: ");
+    msg_begin();
+    print_raw("patched ");
     print_raw(name);
-    print_raw(" last_lba ");
-    print_hex_u64(old_last);
+    print_raw(": ");
+    print_raw(from_size);
     print_raw(" -> ");
-    print_hex_u64(new_last);
-    print_raw("\nui_print\n");
+    print_raw(to_size);
+    print_raw(" (last_lba ");
+    print_hex_u64(from_last);
+    print_raw(" -> ");
+    print_hex_u64(to_last);
+    print_raw(")");
+    msg_end();
     return 0;
 }
 
 static int patch_entries(u32 count, u32 size, int *changed) {
     int have_boot_a = 0, have_boot_b = 0, have_vba = 0, have_vbb = 0;
     int have_dtbo_a = 0, have_dtbo_b = 0;
+    u8 *vba = 0;
+    u8 *vbb = 0;
+    u64 vba_last = 0;
+    u64 vbb_last = 0;
     u32 i;
 
     for (i = 0; i < count; i++) {
@@ -360,16 +403,20 @@ static int patch_entries(u32 count, u32 size, int *changed) {
                 return -1;
         } else if (name_eq(entry, "vendor_boot_a")) {
             have_vba = 1;
-            if (patch_vendor_part(entry, "vendor_boot_a", VENDOR_BOOT_A_FIRST,
-                                  VENDOR_BOOT_A_OLD_LAST,
-                                  VENDOR_BOOT_A_NEW_LAST, changed))
+            vba = entry;
+            vba_last = get_le64(entry + 40);
+            if (get_le64(entry + 32) != VENDOR_BOOT_A_FIRST) {
+                ui_print("unexpected vendor_boot start LBA");
                 return -1;
+            }
         } else if (name_eq(entry, "vendor_boot_b")) {
             have_vbb = 1;
-            if (patch_vendor_part(entry, "vendor_boot_b", VENDOR_BOOT_B_FIRST,
-                                  VENDOR_BOOT_B_OLD_LAST,
-                                  VENDOR_BOOT_B_NEW_LAST, changed))
+            vbb = entry;
+            vbb_last = get_le64(entry + 40);
+            if (get_le64(entry + 32) != VENDOR_BOOT_B_FIRST) {
+                ui_print("unexpected vendor_boot start LBA");
                 return -1;
+            }
         } else if (name_eq(entry, "dtbo_a")) {
             have_dtbo_a = 1;
             if (get_le64(entry + 32) != DTBO_A_FIRST)
@@ -386,6 +433,38 @@ static int patch_entries(u32 count, u32 size, int *changed) {
         ui_print("required Fire A/B partition names were not found");
         return -1;
     }
+
+    if (auto_toggle) {
+        if (vba_last == VENDOR_BOOT_A_OLD_LAST &&
+            vbb_last == VENDOR_BOOT_B_OLD_LAST) {
+            restore_stock = 0;
+            ui_print("detected current layout: stock 64 MiB vendor_boot_a/b");
+            ui_print("selected action: install GKI 6.6 8 MiB layout");
+        } else if (vba_last == VENDOR_BOOT_A_NEW_LAST &&
+                   vbb_last == VENDOR_BOOT_B_NEW_LAST) {
+            restore_stock = 1;
+            ui_print("detected current layout: GKI 6.6 8 MiB vendor_boot_a/b");
+            ui_print("selected action: rollback to stock 64 MiB layout");
+        } else {
+            ui_print("mixed or unexpected vendor_boot_a/b sizes");
+            msg_begin();
+            print_raw("vendor_boot_a last_lba=");
+            print_hex_u64(vba_last);
+            print_raw(" vendor_boot_b last_lba=");
+            print_hex_u64(vbb_last);
+            msg_end();
+            return -1;
+        }
+    }
+
+    if (patch_vendor_part(vba, "vendor_boot_a", VENDOR_BOOT_A_FIRST,
+                          VENDOR_BOOT_A_OLD_LAST, VENDOR_BOOT_A_NEW_LAST,
+                          changed))
+        return -1;
+    if (patch_vendor_part(vbb, "vendor_boot_b", VENDOR_BOOT_B_FIRST,
+                          VENDOR_BOOT_B_OLD_LAST, VENDOR_BOOT_B_NEW_LAST,
+                          changed))
+        return -1;
     return 0;
 }
 
@@ -394,9 +473,10 @@ static int validate_header(const u8 *h, const char *which) {
     u32 expected_crc;
     u32 actual_crc;
     if (!mem_eq(h, "EFI PART", 8)) {
-        print_raw("ui_print bad GPT signature in ");
+        msg_begin();
+        print_raw("bad GPT signature in ");
         print_raw(which);
-        print_raw("\nui_print\n");
+        msg_end();
         return -1;
     }
     header_size = get_le32(h + 12);
@@ -407,9 +487,10 @@ static int validate_header(const u8 *h, const char *which) {
     expected_crc = get_le32(h + 16);
     actual_crc = crc32_gpt_header(h, header_size);
     if (actual_crc != expected_crc) {
-        print_raw("ui_print bad GPT header CRC in ");
+        msg_begin();
+        print_raw("bad GPT header CRC in ");
         print_raw(which);
-        print_raw("\nui_print\n");
+        msg_end();
         return -1;
     }
     return 0;
@@ -423,10 +504,10 @@ static void refresh_header_crc(u8 *h) {
 
 static int write_backup(long disk, u64 backup_lba) {
     static const char *paths[] = {
-        "/sdcard/Fire-GKI66-vendor_boot-8M-gpt-backup.bin",
-        "/data/media/0/Fire-GKI66-vendor_boot-8M-gpt-backup.bin",
-        "/cache/Fire-GKI66-vendor_boot-8M-gpt-backup.bin",
-        "/tmp/Fire-GKI66-vendor_boot-8M-gpt-backup.bin",
+        "/sdcard/Fire-GKI66-vendor_boot-toggle-gpt-backup.bin",
+        "/data/media/0/Fire-GKI66-vendor_boot-toggle-gpt-backup.bin",
+        "/cache/Fire-GKI66-vendor_boot-toggle-gpt-backup.bin",
+        "/tmp/Fire-GKI66-vendor_boot-toggle-gpt-backup.bin",
     };
     u64 disk_bytes = (backup_lba + 1ULL) * SECTOR_SIZE;
     unsigned i;
@@ -440,9 +521,10 @@ static int write_backup(long disk, u64 backup_lba) {
             copy_range(disk, out, disk_bytes - BACKUP_BYTES, BACKUP_BYTES) == 0) {
             sys_fsync(out);
             sys_close(out);
-            print_raw("ui_print GPT backup saved: ");
+            msg_begin();
+            print_raw("GPT backup saved: ");
             print_raw(paths[i]);
-            print_raw("\nui_print\n");
+            msg_end();
             return 0;
         }
         sys_close(out);
@@ -458,7 +540,14 @@ static int repartition(const char *disk_path) {
     u32 count, size, entries_bytes, entries_crc;
     int changed = 0;
 
-    ui_print("Fire GKI 6.6 vendor_boot GPT migration");
+    if (auto_toggle)
+        ui_print("Fire vendor_boot GPT auto-toggle");
+    else if (restore_stock)
+        ui_print("Fire vendor_boot GPT rollback: 8 MiB -> 64 MiB");
+    else
+        ui_print("Fire GKI 6.6 vendor_boot GPT migration: 64 MiB -> 8 MiB");
+    ui_print("target disk: /dev/block/mmcblk0");
+    ui_print("guards: GPT signature, header CRC, entries CRC, Fire A/B geometry");
     disk = sys_openat(AT_FDCWD, disk_path, O_RDWR, 0);
     if (disk < 0) {
         ui_print("failed to open /dev/block/mmcblk0");
@@ -470,6 +559,7 @@ static int repartition(const char *disk_path) {
         sys_close(disk);
         return 1;
     }
+    ui_print("primary GPT header: OK");
 
     backup_lba = get_le64(header + 32);
     entry_lba = get_le64(header + 72);
@@ -490,6 +580,7 @@ static int repartition(const char *disk_path) {
         return 1;
     }
     backup_entry_lba = get_le64(backup_header + 72);
+    ui_print("backup GPT header: OK");
 
     if (write_backup(disk, backup_lba)) {
         sys_close(disk);
@@ -506,6 +597,7 @@ static int repartition(const char *disk_path) {
         sys_close(disk);
         return 1;
     }
+    ui_print("partition entries CRC: OK");
 
     if (patch_entries(count, size, &changed)) {
         sys_close(disk);
@@ -513,7 +605,10 @@ static int repartition(const char *disk_path) {
     }
 
     if (!changed) {
-        ui_print("GPT already has 8 MiB vendor_boot_a/b");
+        if (restore_stock)
+            ui_print("GPT already has stock 64 MiB vendor_boot_a/b");
+        else
+            ui_print("GPT already has 8 MiB vendor_boot_a/b");
         sys_close(disk);
         return 0;
     }
@@ -540,17 +635,39 @@ static int repartition(const char *disk_path) {
     if (sys_ioctl(disk, BLKRRPART, 0) < 0)
         ui_print("kernel kept old partition table until reboot");
     sys_close(disk);
-    ui_print("done: vendor_boot_a/b GPT size is now 8 MiB");
+    ui_print("GPT primary + backup written and synced");
+    if (restore_stock)
+        ui_print("done: vendor_boot_a/b GPT size is now 64 MiB");
+    else
+        ui_print("done: vendor_boot_a/b GPT size is now 8 MiB");
+    ui_print("next step: reboot recovery so block devices refresh");
     return 0;
 }
 
 static int app_main(int argc, char **argv) {
     const char *disk_path = "/dev/block/mmcblk0";
+    int i;
     if (argc >= 3)
         ui_fd = parse_fd(argv[2]);
+    for (i = 1; i < argc; i++) {
+        if (str_eq(argv[i], "--plain")) {
+            plain_output = 1;
+            ui_fd = 1;
+        } else if (str_eq(argv[i], "--restore-stock")) {
+            auto_toggle = 0;
+            restore_stock = 1;
+        } else if (str_eq(argv[i], "--shrink-gki66")) {
+            auto_toggle = 0;
+            restore_stock = 0;
+        } else if (str_eq(argv[i], "--toggle")) {
+            auto_toggle = 1;
+        }
+    }
 #ifdef HOST_TEST
-    if (argc >= 2)
-        disk_path = argv[1];
+    for (i = 1; i < argc; i++) {
+        if (argv[i][0] != '-')
+            disk_path = argv[i];
+    }
 #endif
     return repartition(disk_path);
 }
