@@ -29,6 +29,13 @@ GPT sizes while unlocked. The v4 GKI layout therefore requires the real
 `vendor_boot_a` and `vendor_boot_b` GPT entries to match the configured
 8 MiB `BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE`; leaving the stock 64 MiB
 vendor_boot entries can exhaust LK AVB heap before Linux starts.
+This tree does not contain the firmware scatter/GPT source, so the firmware
+packaging layer must carry that physical layout change. Check a candidate
+scatter before release with:
+
+```sh
+python3 device/xiaomi/fire/kernel/6.6/check-fire-gki66-partitions.py MT6768_Android_scatter.xml
+```
 
 The recovery install flow remains compatible with the crDroid instructions:
 flash recovery through `fastboot flash vendor_boot vendor_boot.img`, then reboot
