@@ -289,15 +289,6 @@ mmqos-mt6893.ko
 mmqos-mt6899.ko
 mmqos-mt6991.ko
 mmqos_wrapper.ko
-modules.alias
-modules.builtin
-modules.builtin.modinfo
-modules.dep
-modules.devname
-modules.order
-modules.softdep
-modules.symbols
-modules.symbols.bin
 monitor_hang.ko
 mrdump.ko
 mt6315-regulator.ko

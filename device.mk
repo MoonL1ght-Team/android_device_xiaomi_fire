@@ -240,8 +240,6 @@ $(call soong_config_set_bool,mediatek_gadget,use_custom_usb_gadget_rc,true)
 
 # Rootdir
 PRODUCT_PACKAGES += \
-    fstab.mt6768 \
-    fstab.mt6768.ramdisk \
     init.connectivity.rc \
     init.modem.rc \
     init.mt6768.rc \
@@ -251,6 +249,14 @@ PRODUCT_PACKAGES += \
     init.sensor_1_0.rc \
     init.target.rc \
     ueventd.mt6768.rc
+
+PRODUCT_PACKAGES += \
+    fstab.mt6768
+
+ifneq ($(FIRE_KERNEL_VERSION),6.6)
+PRODUCT_PACKAGES += \
+    fstab.mt6768.ramdisk
+endif
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/recovery/root/init.recovery.mt6768.rc:$(TARGET_COPY_OUT_RECOVERY)/root/init.recovery.mt6768.rc

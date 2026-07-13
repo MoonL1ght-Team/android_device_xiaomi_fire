@@ -5,8 +5,8 @@
 #
 
 FIRE_KERNEL_VERSION ?= 4.19
-FIRE_KERNEL_6_6_VENDOR_MODULE_LIST ?= device/xiaomi/fire/kernel/6.6/vendor-modules.list
 
 ifeq ($(FIRE_KERNEL_VERSION),6.6)
-PRODUCT_PACKAGES += fire_kernel_6_6_vendor_modules
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/rootdir/etc/fstab.mt6768:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.mt6768
 endif
