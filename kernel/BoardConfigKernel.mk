@@ -35,6 +35,12 @@ FIRE_KERNEL_6_6_DIST_DTBO ?= $(FIRE_KERNEL_6_6_DIST_DIR)/dtbo.img
 FIRE_KERNEL_6_6_PREBUILT_IMAGE ?= $(FIRE_KERNEL_6_6_DIST_IMAGE)
 FIRE_KERNEL_6_6_PREBUILT_DTB ?= $(FIRE_KERNEL_6_6_DIST_DTB)
 FIRE_KERNEL_6_6_PREBUILT_DTBO ?= $(FIRE_KERNEL_6_6_DIST_DTBO)
+FIRE_KERNEL_6_6_SCATTER_SOURCE ?= $(firstword $(wildcard \
+    $(DEVICE_PATH)/kernel/6.6/MT6768_Android_scatter.xml \
+    $(DEVICE_PATH)/kernel/6.6/MT6768_Android_scatter.txt \
+    vendor/xiaomi/fire/MT6768_Android_scatter.xml \
+    vendor/xiaomi/fire/MT6768_Android_scatter.txt))
+FIRE_KERNEL_6_6_SCATTER_OUTPUT ?= $(if $(FIRE_KERNEL_6_6_SCATTER_SOURCE),$(FIRE_KERNEL_6_6_DIST_DIR)/$(notdir $(FIRE_KERNEL_6_6_SCATTER_SOURCE)))
 FIRE_KERNEL_6_6_MODULE_SRC_DIR ?= $(FIRE_KERNEL_6_6_DIST_DIR)/modules/vendor/lib/modules
 FIRE_KERNEL_6_6_VENDOR_MODULE_LIST ?= $(DEVICE_PATH)/kernel/6.6/vendor-modules.list
 FIRE_KERNEL_6_6_VENDOR_BOOT_MODULE_LIST ?= $(DEVICE_PATH)/kernel/6.6/vendor_boot.modules.load
@@ -57,6 +63,7 @@ FIRE_KERNEL_6_6_REQUIRED_DIST_FILES := \
     $(FIRE_KERNEL_6_6_DIST_IMAGE) \
     $(FIRE_KERNEL_6_6_DIST_DTB) \
     $(FIRE_KERNEL_6_6_DIST_DTBO)
+FIRE_KERNEL_6_6_GENERATED_SCATTER := $(strip $(FIRE_KERNEL_6_6_SCATTER_OUTPUT))
 FIRE_KERNEL_6_6_MISSING_DIST_FILES := $(strip $(foreach file,$(FIRE_KERNEL_6_6_REQUIRED_DIST_FILES),$(if $(wildcard $(file)),,$(file))))
 FIRE_KERNEL_6_6_MISSING_VENDOR_MODULES := $(strip $(foreach file,$(FIRE_KERNEL_6_6_VENDOR_MODULES),$(if $(wildcard $(file)),,$(file))))
 FIRE_KERNEL_6_6_MISSING_VENDOR_BOOT_MODULES := $(strip $(foreach file,$(FIRE_KERNEL_6_6_VENDOR_BOOT_MODULES),$(if $(wildcard $(file)),,$(file))))
@@ -80,6 +87,9 @@ $(error Fire 6.6 vendor module list is empty: $(FIRE_KERNEL_6_6_VENDOR_MODULE_LI
 endif
 ifeq ($(FIRE_KERNEL_6_6_VENDOR_BOOT_MODULE_NAMES),)
 $(error Fire 6.6 vendor_boot module list is empty: $(FIRE_KERNEL_6_6_VENDOR_BOOT_MODULE_LIST))
+endif
+ifeq ($(FIRE_KERNEL_6_6_SCATTER_SOURCE),)
+$(error Fire 6.6 scatter source is missing: keep kernel/6.6/MT6768_Android_scatter.xml in this tree or set FIRE_KERNEL_6_6_SCATTER_SOURCE)
 endif
 ifeq ($(FIRE_KERNEL_BUILD_TYPE),prebuilt)
 ifneq ($(FIRE_KERNEL_6_6_MISSING_DIST_FILES),)

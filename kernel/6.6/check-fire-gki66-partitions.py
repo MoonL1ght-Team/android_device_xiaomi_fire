@@ -3,6 +3,7 @@
 
 import sys
 import xml.etree.ElementTree as ET
+from argparse import ArgumentParser
 from pathlib import Path
 
 
@@ -65,13 +66,69 @@ def load_parts(path):
     return parse_scatter_text(path)
 
 
-def main():
-    if len(sys.argv) != 2:
-        raise SystemExit(
-            "usage: check-fire-gki66-partitions.py MT6768_Android_scatter.xml|txt"
-        )
+def rewrite_xml_line(line, size):
+    start = line.index("<partition_size>") + len("<partition_size>")
+    end = line.index("</partition_size>")
+    return f"{line[:start]}0x{size:x}{line[end:]}"
 
-    path = Path(sys.argv[1])
+
+def rewrite_text_line(line, size):
+    prefix, _old = line.split(":", 1)
+    return f"{prefix}: 0x{size:x}\n"
+
+
+def write_patched_scatter(src, dst):
+    text = src.read_text(errors="ignore")
+    xml_format = text[:256].lstrip().startswith("<")
+    active = None
+    patched = set()
+    out = []
+
+    for line in text.splitlines(keepends=True):
+        stripped = line.strip()
+        if xml_format:
+            for name in EXPECTED:
+                if f"<partition_name>{name}</partition_name>" in stripped:
+                    active = name
+                    break
+            if active and "<partition_size>" in stripped:
+                line = rewrite_xml_line(line, EXPECTED[active])
+                patched.add(active)
+                active = None
+        else:
+            if stripped.startswith("partition_name:"):
+                name = stripped.split(":", 1)[1].strip()
+                active = name if name in EXPECTED else None
+            elif active and stripped.startswith("partition_size:"):
+                line = rewrite_text_line(line, EXPECTED[active])
+                patched.add(active)
+                active = None
+        out.append(line)
+
+    missing = sorted(set(EXPECTED) - patched)
+    if missing:
+        raise SystemExit(f"failed to patch partition(s): {', '.join(missing)}")
+
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    dst.write_text("".join(out))
+
+
+def main():
+    parser = ArgumentParser()
+    parser.add_argument("scatter", type=Path)
+    parser.add_argument(
+        "-o",
+        "--output",
+        type=Path,
+        help="write a scatter with the Fire GKI 6.6 physical partition sizes",
+    )
+    args = parser.parse_args()
+
+    path = args.scatter
+    if args.output:
+        write_patched_scatter(path, args.output)
+        path = args.output
+
     parts = load_parts(path)
     errors = []
 
