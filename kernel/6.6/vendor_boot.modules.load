@@ -8,6 +8,7 @@ pinctrl-mtk-v2.ko
 pinctrl-mt6768.ko
 pinctrl-mtk-common-v2_debug.ko
 mrdump.ko
+mtk_wdt.ko
 blocktag.ko
 mtk-mmc-dbg.ko
 irq-dbg.ko

@@ -49,11 +49,7 @@ FIRE_KERNEL_6_6_VENDOR_BOOT ?= true
 # state. Keep vendor_boot small enough for boot + vendor_boot to fit its heap.
 FIRE_KERNEL_6_6_VENDOR_BOOTIMAGE_PARTITION_SIZE ?= 8388608
 FIRE_KERNEL_6_6_BOOT_CMDLINE ?=
-# Fire stock LK/GZ reaches the ARM64 entry point but currently resets before
-# Linux prints anything. Keep the base GKI image replaceable and carry this
-# documented early arm64 KASLR switch in vendor_boot while bring-up proves the
-# FDT/MMU handoff.
-FIRE_KERNEL_6_6_VENDOR_CMDLINE ?= bootopt=64S3,32N2,64N2 nokaslr
+FIRE_KERNEL_6_6_VENDOR_CMDLINE ?= bootopt=64S3,32N2,64N2
 FIRE_KERNEL_6_6_BOOTCONFIG ?= androidboot.init_fatal_reboot_target=recovery
 # Fire LK enters the ARM64 Image at RAM base + 0x80000. The kernel defconfig
 # owns the header value; the packager only verifies the produced Image.
