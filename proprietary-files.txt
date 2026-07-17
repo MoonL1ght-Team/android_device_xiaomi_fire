@@ -592,28 +592,11 @@ vendor/lib64/vendor.mediatek.hardware.pq@2.7.so
 vendor/lib64/vendor.mediatek.hardware.pq@2.8.so
 vendor/lib64/vendor.mediatek.hardware.pq@2.9.so
 
-# DRM
-vendor/bin/hw/android.hardware.drm@1.4-service.widevine
-vendor/etc/init/android.hardware.drm@1.4-service.widevine.rc
-vendor/etc/vintf/manifest/manifest_android.hardware.drm@1.4-service.widevine.xml
-vendor/lib64/mediadrm/libwvdrmengine.so
-vendor/lib64/liboemcrypto.so
-vendor/lib64/libtlcWidevineModularDrm.so
-vendor/lib64/liburee_meta_drmkeyinstall.so
-vendor/lib64/libwvhidl.so
-vendor/lib64/libwvkeybox.so
-vendor/lib64/libwvkeyboxext.so
-
 # DRVB
 vendor/lib/mt6768/libmtk_drvb.so;SYMLINK=vendor/lib/libmtk_drvb.so
 vendor/lib64/mt6768/libmtk_drvb.so;SYMLINK=vendor/lib64/libmtk_drvb.so
 
 # Fingerprint
-vendor/bin/hw/android.hardware.biometrics.fingerprint@2.1-service
-vendor/bin/hw/android.hardware.biometrics.fingerprint@2.1-service_lc
-vendor/etc/init/android.hardware.biometrics.fingerprint@2.1-service.rc
-vendor/etc/init/android.hardware.biometrics.fingerprint@2.1-service_lc.rc
-vendor/etc/vintf/manifest/android.hardware.biometrics.fingerprint@2.1-service.xml:vendor/etc/vintf/manifest/vendor_android.hardware.biometrics.fingerprint@2.1-service.xml
 vendor/lib64/hw/fingerprint.fpc.so
 vendor/lib64/hw/fingerprint.goodix.so;FIX_SONAME
 vendor/lib64/libgf_ca.so
@@ -637,10 +620,6 @@ vendor/bin/fuelgauged_nvram
 vendor/etc/init/fuelgauged_init.rc
 vendor/etc/init/fuelgauged_nvram_init.rc
 vendor/lib/libfgauge_gm30.so
-
-# Gatekeeper
-vendor/lib64/hw/gatekeeper.beanpod.so
-vendor/lib64/hw/libSoftGatekeeper.so;SYMLINK=vendor/lib64/hw/gatekeeper.default.so
 
 # GNSS
 vendor/bin/hw/android.hardware.gnss-service.mediatek
@@ -728,7 +707,6 @@ vendor/lib64/libifcutils_mtk.so
 vendor/lib64/vendor.mediatek.hardware.netdagent@1.0.so
 
 # Thermal
-vendor/bin/hw/android.hardware.thermal@2.0-service.mtk
 vendor/bin/mi_thermald
 vendor/bin/thermal
 vendor/bin/thermal_manager
@@ -741,7 +719,6 @@ vendor/etc/.tp/.thermal_policy_08
 vendor/etc/.tp/thermal.conf
 vendor/etc/.tp/thermal.off.conf
 vendor/etc/fstb.cfg
-vendor/etc/init/android.hardware.thermal@2.0-service.mtk.rc
 vendor/etc/init/init.thermal.rc
 vendor/etc/init/init.thermal_manager.rc
 vendor/etc/init/init.thermalloadalgod.rc
@@ -756,10 +733,7 @@ vendor/etc/thermal-phone.conf
 vendor/etc/thermal-tgame.conf
 vendor/etc/thermal-video.conf
 vendor/etc/thermald-devices.conf
-vendor/lib/hw/android.hardware.thermal@2.0-impl.so
 vendor/lib/libthermalalgo.so
-vendor/lib64/hw/android.hardware.thermal@2.0-impl.so
-vendor/lib64/hw/thermal_hal.so
 vendor/lib64/libmtcloader.so
 
 # Trusted Execution Environment (TEE)
@@ -984,12 +958,6 @@ vendor/lib64/hw/sensors.mt6768.so
 vendor/lib64/libhwm.so
 vendor/lib64/libksensor.so
 vendor/lib64/libsensor_custom.so
-vendor/lib64/sensors.camera.light.so
-
-# USB
-vendor/bin/hw/android.hardware.usb@1.2-service-mediatekv2
-vendor/etc/init/android.hardware.usb@1.2-service-mediatekv2.rc
-vendor/etc/vintf/manifest/android.hardware.usb@1.2-service-mediatekv2.xml
 
 # Wi-Fi
 vendor/bin/wlan_assistant

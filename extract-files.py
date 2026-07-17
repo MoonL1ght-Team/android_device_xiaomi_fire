@@ -58,8 +58,6 @@ blob_fixups: blob_fixups_user_type = {
         .binary_regex_replace(b'\x34\xE8\x87\x40\xB9', b'\x34\x28\x02\x80\x52'),
     ('vendor/lib64/libmtkcam_stdutils.so', 'vendor/lib64/hw/android.hardware.camera.provider@2.6-impl-mediatek.so'): blob_fixup()
         .replace_needed('libutils.so', 'libutils-v32.so'),
-    'vendor/lib64/sensors.camera.light.so': blob_fixup()
-        .replace_needed('libcamera2ndk_vendor.so', 'libcamera2ndk_vendor-v35.so'),
     ('vendor/lib64/libteei_daemon_vfs.so', 'vendor/lib64/lib3a.flash.so', 'vendor/lib64/libSQLiteModule_VER_ALL.so'): blob_fixup()
         .add_needed('liblog.so'),
     'vendor/lib64/libmnl.so' : blob_fixup()
