@@ -30,9 +30,9 @@ on init
     write /dev/stune/top-app/schedtune.uclamp.min 4
     write /dev/stune/top-app/schedtune.uclamp.max max
 
-    # Reset stune group setting for NNAPI HAL processes
-    write /dev/stune/nnapi-hal/schedtune.boost 0
-    write /dev/stune/nnapi-hal/schedtune.prefer_idle 0
+    # Keep NNAPI HAL on the schedtune profile used by Android 16 API-30 devices
+    write /dev/stune/nnapi-hal/schedtune.boost 1
+    write /dev/stune/nnapi-hal/schedtune.prefer_idle 1
 
     # create an stune group for camera-specific processes
     mkdir /dev/stune/camera-daemon
@@ -40,7 +40,11 @@ on init
     write /dev/stune/camera-daemon/schedtune.boost 0
     chown system system /dev/stune/camera-daemon
     chown system system /dev/stune/camera-daemon/tasks
+    chown system system /dev/stune/camera-daemon/schedtune.uclamp.min
+    chown system system /dev/stune/camera-daemon/schedtune.uclamp.max
     chmod 0664 /dev/stune/camera-daemon/tasks
+    write /dev/stune/camera-daemon/schedtune.uclamp.min 0
+    write /dev/stune/camera-daemon/schedtune.uclamp.max max
 
     # create io boost group
     mkdir /dev/stune/io
@@ -50,7 +54,6 @@ on init
 
     # update cpus for cpuset cgroup
     write /dev/cpuset/foreground/cpus 0-2,4-7
-    write /dev/cpuset/foreground/boost/cpus 0-7
     write /dev/cpuset/background/cpus 0-2
     write /dev/cpuset/system-background/cpus 0-3
     write /dev/cpuset/top-app/cpus 0-7

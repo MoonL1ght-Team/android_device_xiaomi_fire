@@ -152,7 +152,7 @@
     },
     {
       "Name": "CDUclampMin",
-      "Path": "/dev/cpuctl/camera-daemon/cpu.uclamp.min",
+      "Path": "/dev/stune/camera-daemon/schedtune.uclamp.min",
       "Values": [
         "100",
         "0"
