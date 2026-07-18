@@ -78,8 +78,10 @@ PRODUCT_PACKAGES += \
     android.hardware.ir-service.example
 
 # Bluetooth
+ifneq ($(wildcard hardware/mediatek/aidl/bluetooth/Android.bp),)
 PRODUCT_PACKAGES += \
     android.hardware.bluetooth-service.mediatek
+endif
 
 # Cgroup
 PRODUCT_COPY_FILES += \
@@ -88,8 +90,15 @@ PRODUCT_COPY_FILES += \
 
 # Display
 PRODUCT_PACKAGES += \
-    android.hardware.graphics.composer@2.1-service \
+    android.hardware.graphics.composer@2.1-service
+
+ifneq ($(wildcard hardware/mediatek/aidl/memtrack/MemtrackDeviceIon.cpp),)
+PRODUCT_PACKAGES += \
     android.hardware.memtrack-service.mediatek
+else ifneq ($(wildcard hardware/mediatek/aidl/memtrack/GpuSysfsReader.cpp),)
+PRODUCT_PACKAGES += \
+    android.hardware.memtrack-service.mediatek-mali
+endif
 
 # DRM
 PRODUCT_PACKAGES += \
