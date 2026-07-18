@@ -79,7 +79,6 @@ on charger
     write /sys/devices/platform/battery_meter/FG_daemon_log_level 0
     write /sys/bus/platform/devices/battery/FG_daemon_log_level 0
     # Permissions for System Server and daemons.
-    chown system system /sys/power/autosleep
     chown system system /sys/power/state
     chown system system /sys/power/wakeup_count
     chown radio wakelock /sys/power/wake_lock
@@ -696,8 +695,6 @@ on boot
     write /proc/bootprof "INIT:boot"
 
     write /proc/sys/vm/dirty_writeback_centisecs 300
-    chown system system /sys/power/autosleep
-    chmod 0660 /sys/power/autosleep
 
     chmod 0664 /sys/class/leds/lcd-backlight/brightness
     chown system system /sys/class/leds/lcd-backlight/brightness
