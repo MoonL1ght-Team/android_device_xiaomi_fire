@@ -78,6 +78,15 @@ PRODUCT_PACKAGES += \
     android.hardware.ir-service.example
 
 # Bluetooth
+SOONG_CONFIG_NAMESPACES += xiaomi_fire
+SOONG_CONFIG_xiaomi_fire += uses_mtk_bt_audio_source
+
+ifneq ($(wildcard hardware/mediatek/interfaces/hardware/bluetooth/audio/2.1/Android.bp),)
+$(call soong_config_set_bool,xiaomi_fire,uses_mtk_bt_audio_source,true)
+else
+$(call soong_config_set_bool,xiaomi_fire,uses_mtk_bt_audio_source,false)
+endif
+
 ifneq ($(wildcard hardware/mediatek/aidl/bluetooth/Android.bp),)
 PRODUCT_PACKAGES += \
     android.hardware.bluetooth-service.mediatek
