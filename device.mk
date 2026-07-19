@@ -81,16 +81,7 @@ PRODUCT_PACKAGES += \
 SOONG_CONFIG_NAMESPACES += xiaomi_fire
 SOONG_CONFIG_xiaomi_fire += uses_mtk_bt_audio_source
 
-ifneq ($(wildcard hardware/mediatek/interfaces/hardware/bluetooth/audio/2.1/Android.bp),)
-$(call soong_config_set_bool,xiaomi_fire,uses_mtk_bt_audio_source,true)
-else
 $(call soong_config_set_bool,xiaomi_fire,uses_mtk_bt_audio_source,false)
-endif
-
-ifneq ($(wildcard hardware/mediatek/aidl/bluetooth/Android.bp),)
-PRODUCT_PACKAGES += \
-    android.hardware.bluetooth-service.mediatek
-endif
 
 # Cgroup
 PRODUCT_COPY_FILES += \
@@ -99,15 +90,8 @@ PRODUCT_COPY_FILES += \
 
 # Display
 PRODUCT_PACKAGES += \
-    android.hardware.graphics.composer@2.1-service
-
-ifneq ($(wildcard hardware/mediatek/aidl/memtrack/MemtrackDeviceIon.cpp),)
-PRODUCT_PACKAGES += \
-    android.hardware.memtrack-service.mediatek
-else ifneq ($(wildcard hardware/mediatek/aidl/memtrack/GpuSysfsReader.cpp),)
-PRODUCT_PACKAGES += \
+    android.hardware.graphics.composer@2.1-service \
     android.hardware.memtrack-service.mediatek-mali
-endif
 
 # DRM
 PRODUCT_PACKAGES += \

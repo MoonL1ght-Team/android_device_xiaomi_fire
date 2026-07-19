@@ -1,0 +1,27 @@
+[
+  {
+    "repository": "LineageOS/android_device_mediatek_sepolicy_vndr",
+    "target_path": "device/mediatek/sepolicy_vndr",
+    "branch": "lineage-23.0"
+  },
+  {
+    "repository": "LineageOS/android_hardware_mediatek",
+    "target_path": "hardware/mediatek",
+    "branch": "lineage-23.0"
+  },
+  {
+    "repository": "LineageOS/android_hardware_xiaomi",
+    "target_path": "hardware/xiaomi",
+    "branch": "lineage-23.0"
+  },
+  {
+    "repository": "MoonL1ght-Team/android_kernel_xiaomi_fire",
+    "target_path": "kernel/xiaomi/fire",
+    "branch": "16.0"
+  },
+  {
+    "repository": "MoonL1ght-Team/proprietary_vendor_xiaomi_fire",
+    "target_path": "vendor/xiaomi/fire",
+    "branch": "oss"
+  }
+]
