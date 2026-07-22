@@ -2,7 +2,7 @@
 
 <root>
   <general name="MTK_PLATFORM_CFG">
-    <config_version name="V1.1.8">
+    <config_version name="V1.1.2">
       <platform>MT6768</platform>
       <project>fire</project>
       <storage>EMMC</storage>
@@ -510,7 +510,7 @@
     <type>NORMAL_ROM</type>
     <linear_start_addr>0x27f22000</linear_start_addr>
     <physical_start_addr>0x27f22000</physical_start_addr>
-    <partition_size>0x800000</partition_size>
+    <partition_size>0x4000000</partition_size>
     <region>EMMC_USER</region>
     <storage>HW_STORAGE_EMMC</storage>
     <boundary_check>true</boundary_check>
@@ -782,7 +782,7 @@
     <type>NORMAL_ROM</type>
     <linear_start_addr>0x49ba2000</linear_start_addr>
     <physical_start_addr>0x49ba2000</physical_start_addr>
-    <partition_size>0x800000</partition_size>
+    <partition_size>0x4000000</partition_size>
     <region>EMMC_USER</region>
     <storage>HW_STORAGE_EMMC</storage>
     <boundary_check>true</boundary_check>

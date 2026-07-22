@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-FIRE_KERNEL_VERSION ?= 4.19
+FIRE_KERNEL_VERSION ?= 6.6
 
 ifeq ($(FIRE_KERNEL_VERSION),6.6)
 PRODUCT_COPY_FILES += \

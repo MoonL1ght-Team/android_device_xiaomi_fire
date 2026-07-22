@@ -39,13 +39,14 @@ $(FIRE_KERNEL_6_6_STAMP): FORCE
 		ROM_ARTIFACTS_DIR=$(FIRE_KERNEL_6_6_DIST_DIR_ABS) \
 		SKIP_AK3=1 \
 		FIRE66_ROM_DIST_ONLY=1 \
-		FIRE66_BOOT_LAYOUT=boot_v4_vendor_boot \
+		FIRE66_BOOT_LAYOUT=boot_v3_vendor_boot \
 		FIRE66_VENDOR_CMDLINE="$(FIRE_KERNEL_6_6_VENDOR_CMDLINE)" \
 		FIRE66_BOOTCONFIG="$(FIRE_KERNEL_6_6_BOOTCONFIG)" \
 		FIRE66_EXPECT_KERNEL_TEXT_OFFSET=$(FIRE_KERNEL_6_6_EXPECT_TEXT_OFFSET) \
 		FIRE66_VENDOR_BOOT_PARTITION_BYTES=$(FIRE_KERNEL_6_6_VENDOR_BOOTIMAGE_PARTITION_SIZE) \
 		FIRE66_VENDOR_BOOT_FSTAB=$(abspath $(LOCAL_PATH)/rootdir/etc/fstab.mt6768) \
-		FIRST_STAGE_VENDOR_BOOT_MODULES_FILE=$(abspath $(FIRE_KERNEL_6_6_VENDOR_BOOT_MODULE_LIST)) \
+		FIRST_STAGE_VENDOR_BOOT_MODULES_FILE=$(abspath $(FIRE_KERNEL_6_6_VENDOR_BOOT_MODULE_LOAD)) \
+		FIRST_STAGE_VENDOR_BOOT_RECOVERY_MODULES_FILE=$(abspath $(FIRE_KERNEL_6_6_VENDOR_BOOT_RECOVERY_MODULE_LOAD)) \
 		./scripts/package_fire_ak3.sh
 	$(hide) if [ -n "$(FIRE_KERNEL_6_6_SCATTER_SOURCE_ABS)" ]; then \
 		python3 $(abspath $(LOCAL_PATH)/kernel/6.6/check-fire-gki66-partitions.py) \
@@ -54,15 +55,18 @@ $(FIRE_KERNEL_6_6_STAMP): FORCE
 	fi
 	$(hide) touch $@
 
-$(FIRE_KERNEL_6_6_REQUIRED_DIST_FILES) $(FIRE_KERNEL_6_6_GENERATED_SCATTER) $(FIRE_KERNEL_6_6_VENDOR_MODULES) $(FIRE_KERNEL_6_6_VENDOR_BOOT_MODULES): $(FIRE_KERNEL_6_6_STAMP)
+$(FIRE_KERNEL_6_6_REQUIRED_DIST_FILES) $(FIRE_KERNEL_6_6_GENERATED_SCATTER) $(FIRE_KERNEL_6_6_VENDOR_BOOT_MODULES) $(FIRE_KERNEL_6_6_VENDOR_DLKM_MODULES) $(FIRE_KERNEL_6_6_SYSTEM_DLKM_MODULES): $(FIRE_KERNEL_6_6_STAMP)
 	$(hide) test -f $@
 
-$(PRODUCT_OUT)/dtb.img: $(FIRE_KERNEL_6_6_DIST_DTB)
 endif
 
+$(PRODUCT_OUT)/dtb.img: $(FIRE_KERNEL_6_6_DIST_DTB)
+	$(hide) mkdir -p $(dir $@)
+	$(hide) cp -f $< $@
+
 # GKI 6.6 uses the platform kernel module variables from BoardConfigKernel.mk.
-# After the source dist exists, Android's standard boot/vendor_boot/vendor
-# rules decide what goes into each image.
+# After the source dist exists, Android's standard boot/vendor_boot/dlkm rules
+# decide what goes into each image.
 
 endif
 endif

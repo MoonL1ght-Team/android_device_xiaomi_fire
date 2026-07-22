@@ -4,8 +4,16 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+FIRE_KERNEL_VERSION ?= 6.6
+
 # Inherit virtual_ab_ota product
+ifeq ($(FIRE_KERNEL_VERSION),6.6)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/generic_ramdisk.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/launch_with_vendor_ramdisk.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_keys.mk)
+else
 $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
+endif
 
 # Project ID Quota
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
