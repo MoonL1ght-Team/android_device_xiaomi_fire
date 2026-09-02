@@ -12,8 +12,9 @@
     "target_path": "hardware/xiaomi"
   },
   {
-    "repository": "crdroidandroid/android_kernel_xiaomi_fire",
-    "target_path": "kernel/xiaomi/fire"
+    "repository": "MoonL1ght-Team/android_kernel_xiaomi_fire",
+    "target_path": "kernel/xiaomi/fire",
+    "branch": "6.6"
   },
   {
     "repository": "MoonL1ght-Team/proprietary_vendor_xiaomi_fire",
