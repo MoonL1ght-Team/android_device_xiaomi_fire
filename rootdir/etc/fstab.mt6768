@@ -31,7 +31,16 @@ overlay 			  /system/etc/permissions overlay ro,lowerdir=/mnt/vendor/mi_ext/syst
 system_ext 			  /system_ext 		 erofs  ro 												             wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
 system_ext 			  /system_ext 		 ext4   ro 												             wait,slotselect,avb=vbmeta_system,logical,first_stage_mount
 
+vendor_dlkm /vendor_dlkm erofs ro wait,slotselect,avb,logical,first_stage_mount
+vendor_dlkm /vendor_dlkm ext4 ro wait,slotselect,avb,logical,first_stage_mount
+odm_dlkm /odm_dlkm erofs ro wait,slotselect,avb,logical,first_stage_mount
+odm_dlkm /odm_dlkm ext4 ro wait,slotselect,avb,logical,first_stage_mount
+system_dlkm /system_dlkm erofs ro wait,slotselect,avb,logical,first_stage_mount
+system_dlkm /system_dlkm ext4 ro wait,slotselect,avb,logical,first_stage_mount
+
 # Boot/Verity
+/dev/block/by-name/vendor_boot    /vendor_boot          emmc    defaults                                              defaults
+/dev/block/by-name/init_boot      /init_boot            emmc    defaults                                              defaults
 /dev/block/by-name/boot           /boot 		 emmc   												             defaults first_stage_mount,nofail,slotselect
 /dev/block/by-name/vbmeta_vendor  /vbmeta_vendor 	 emmc   												             defaults first_stage_mount,nofail,slotselect
 /dev/block/by-name/vbmeta_system  /vbmeta_system 	 emmc   												             defaults first_stage_mount,nofail,slotselect,avb=vbmeta
