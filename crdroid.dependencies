@@ -19,6 +19,6 @@
   {
     "repository": "MoonL1ght-Team/proprietary_vendor_xiaomi_fire",
     "target_path": "vendor/xiaomi/fire",
-    "branch": "codex/hos2-gki"
+    "branch": "6.6-test"
   }
 ]
